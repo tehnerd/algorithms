@@ -57,3 +57,20 @@ func SelectionSort(array []int32) {
 		}
 	}
 }
+
+func swapElem(array []int32, index1 int, index2 int) {
+	tmpVal := array[index1]
+	array[index1] = array[index2]
+	array[index2] = tmpVal
+}
+
+func InsertionSort(array []int32) {
+	for index1 := 1; index1 < len(array); index1++ {
+		for index2 := index1; index2 > 0; index2-- {
+			if array[index2] > array[index2-1] {
+				break
+			}
+			swapElem(array, index2, index2-1)
+		}
+	}
+}

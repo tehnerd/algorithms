@@ -36,4 +36,8 @@ func main() {
 	fmt.Println("selection sort")
 	sort.SelectionSort(array2)
 	fmt.Println(array2)
+	fmt.Println("insertion sort")
+	array3 := copyArray(initarray)
+	sort.InsertionSort(array3)
+	fmt.Println(array3)
 }
