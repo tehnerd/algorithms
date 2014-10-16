@@ -49,29 +49,45 @@ func copyArray(array1 []int32) []int32 {
 	return array2
 }
 
+func drawSort(index1, index2, arrayLength int) {
+	for cntr := 0; cntr < arrayLength; cntr++ {
+		if cntr == index1 || cntr == index2 {
+			fmt.Print('|')
+		} else {
+			fmt.Print('.')
+		}
+	}
+	fmt.Println("")
+}
+
 func main() {
 	fmt.Println("hello")
-	initarray := make([]int32, 1000)
+	initarray := make([]int32, 10000)
 	rand.Seed(time.Now().UnixNano())
 	for cntr := 0; cntr < cap(initarray); cntr++ {
-		initarray[cntr] = rand.Int31n(100000)
+		initarray[cntr] = rand.Int31n(1000000)
 	}
 	testArray(initarray)
 	array1 := copyArray(initarray)
 	//maxHeap := heap.BuildMaxHeapInt32(array1)
 	//minHeap := heap.BuildMinHeapInt32(array1)
-	fmt.Println("merge sort")
+	fmt.Println("#####  merge sort  #####")
 	timeDecor2(sort.MergeSort, array1, 0, len(array1)-1)
 	testArray(array1)
 	timeDecor2(sort.MergeSort, array1, 0, len(array1)-1)
 	array2 := copyArray(initarray)
-	fmt.Println("selection sort")
+	fmt.Println("#####  selection sort  #####")
 	timeDecor(sort.SelectionSort, array2)
 	testArray(array2)
 	timeDecor(sort.SelectionSort, array2)
-	fmt.Println("insertion sort")
+	fmt.Println("#####  insertion sort  #####")
 	array3 := copyArray(initarray)
 	timeDecor(sort.InsertionSort, array3)
 	testArray(array3)
 	timeDecor(sort.InsertionSort, array3)
+	fmt.Println("#####  shell sort  #####")
+	array4 := copyArray(initarray)
+	timeDecor(sort.ShellSort, array4)
+	testArray(array4)
+	timeDecor(sort.ShellSort, array4)
 }

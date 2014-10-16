@@ -51,10 +51,7 @@ func SelectionSort(array []int32) {
 				minIndex = elemPointer
 			}
 		}
-		if minIndex != index {
-			array[minIndex] = array[index]
-			array[index] = minElem
-		}
+		swapElem(array, index, minIndex)
 	}
 }
 
@@ -72,5 +69,23 @@ func InsertionSort(array []int32) {
 			}
 			swapElem(array, index2, index2-1)
 		}
+	}
+}
+
+func ShellSort(array []int32) {
+	h := 1
+	for h < len(array)/3 {
+		h = 3*h + 1
+	}
+	for h >= 1 {
+		for index1 := h; index1 < len(array); index1++ {
+			for index2 := index1; index2 >= h; index2 -= h {
+				if array[index2] > array[index2-h] {
+					break
+				}
+				swapElem(array, index2, index2-h)
+			}
+		}
+		h = h / 3
 	}
 }
