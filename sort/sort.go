@@ -89,3 +89,42 @@ func ShellSort(array []int32) {
 		h = h / 3
 	}
 }
+
+func QuickSort(array []int32, low, high int) {
+	if low < high {
+		j := partition(array, low, high)
+		QuickSort(array, low, j-1)
+		QuickSort(array, j+1, high)
+	} else {
+		return
+	}
+
+}
+
+func partition(array []int32, low, high int) int {
+	indexLow := low
+	indexHigh := high + 1
+	partItem := array[low]
+	for {
+		indexLow += 1
+		indexHigh -= 1
+		for array[indexLow] < partItem {
+			if indexLow == high {
+				break
+			}
+			indexLow += 1
+		}
+		for partItem < array[indexHigh] {
+			if indexHigh == low {
+				break
+			}
+			indexHigh -= 1
+		}
+		if indexLow >= indexHigh {
+			break
+		}
+		swapElem(array, indexLow, indexHigh)
+	}
+	swapElem(array, low, indexHigh)
+	return indexHigh
+}

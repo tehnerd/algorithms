@@ -90,4 +90,9 @@ func main() {
 	timeDecor(sort.ShellSort, array4)
 	testArray(array4)
 	timeDecor(sort.ShellSort, array4)
+	fmt.Println("#####  quick sort  #####")
+	array5 := copyArray(initarray)
+	timeDecor2(sort.QuickSort, array5, 0, len(array5)-1)
+	testArray(array5)
+	timeDecor2(sort.QuickSort, array5, 0, len(array5)-1)
 }
