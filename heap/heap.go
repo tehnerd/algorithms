@@ -73,20 +73,20 @@ func MaxHeapReheapify(MaxHeap []int32, pos int) {
 	return
 }
 
-func MinHeapReheapify(MaxHeap []int32, pos int) {
-	if 2*(pos+1)-1 >= len(MaxHeap) {
+func MinHeapReheapify(MinHeap []int32, pos int) {
+	if 2*(pos+1)-1 >= len(MinHeap) {
 		return
 	}
-	if MaxHeap[pos] > MaxHeap[2*(pos+1)-1] {
-		swapElem(MaxHeap, pos, 2*(pos+1)-1)
-		MaxHeapReheapify(MaxHeap, 2*(pos+1)-1)
+	if MinHeap[pos] > MinHeap[2*(pos+1)-1] {
+		swapElem(MinHeap, pos, 2*(pos+1)-1)
+		MinHeapReheapify(MinHeap, 2*(pos+1)-1)
 	}
-	if 2*(pos+1) >= len(MaxHeap) {
+	if 2*(pos+1) >= len(MinHeap) {
 		return
 	}
-	if MaxHeap[pos] > MaxHeap[2*(pos+1)] {
-		swapElem(MaxHeap, pos, 2*(pos+1))
-		MaxHeapReheapify(MaxHeap, 2*(pos+1))
+	if MinHeap[pos] > MinHeap[2*(pos+1)] {
+		swapElem(MinHeap, pos, 2*(pos+1))
+		MinHeapReheapify(MinHeap, 2*(pos+1))
 	}
 	return
 }
