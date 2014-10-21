@@ -1,7 +1,7 @@
 package main
 
 import (
-	//"algs/heap"
+	"algs/queues"
 	"algs/sort"
 	"fmt"
 	"math/rand"
@@ -65,7 +65,7 @@ func main() {
 	initarray := make([]int32, 10000)
 	rand.Seed(time.Now().UnixNano())
 	for cntr := 0; cntr < cap(initarray); cntr++ {
-		initarray[cntr] = rand.Int31n(1000000)
+		initarray[cntr] = rand.Int31n(20000000)
 	}
 	testArray(initarray)
 	array1 := copyArray(initarray)
@@ -95,4 +95,15 @@ func main() {
 	timeDecor2(sort.QuickSort, array5, 0, len(array5)-1)
 	testArray(array5)
 	timeDecor2(sort.QuickSort, array5, 0, len(array5)-1)
+	fmt.Println("##### heap sort #####")
+	array6 := copyArray(initarray)
+	timeDecor(sort.HeapSort, array6)
+	testArray(array6)
+	timeDecor(sort.HeapSort, array6)
+	fmt.Println("##### priority queue #####")
+	var pq queues.PQueue
+	for cntr := 0; cntr < len(initarray); cntr++ {
+		(&pq).Insert(initarray[cntr])
+	}
+	(&pq).DequeAll()
 }

@@ -1,5 +1,9 @@
 package sort
 
+import (
+	"algs/heap"
+)
+
 func MergeSort(Array []int32, low, high int) {
 	if low < high {
 		middle := (low + high) / 2
@@ -127,4 +131,12 @@ func partition(array []int32, low, high int) int {
 	}
 	swapElem(array, low, indexHigh)
 	return indexHigh
+}
+
+func HeapSort(array []int32) {
+	minHeap := heap.BuildMinHeapInt32(array)
+	for cntr := 0; cntr < len(array); cntr++ {
+		array[cntr] = minHeap[0]
+		heap.MinHeapReheapify(minHeap, 0)
+	}
 }

@@ -39,16 +39,56 @@ func BuildMinHeapInt32(Heap []int32) []int32 {
 	return MinHeap
 }
 
+func swapElem(array []int32, pos1, pos2 int) {
+	tmp := array[pos1]
+	array[pos1] = array[pos2]
+	array[pos2] = tmp
+}
+
 func MaxHeapInsert(MaxHeap []int32, newElem int32, pos int) {
 	MaxHeap[pos] = newElem
 	if HeapInt32Parent(pos) == -1 {
 		return
 	} else if MaxHeap[HeapInt32Parent(pos)] < newElem {
-		tmp := newElem
-		MaxHeap[pos] = MaxHeap[HeapInt32Parent(pos)]
-		MaxHeap[HeapInt32Parent(pos)] = tmp
+		swapElem(MaxHeap, pos, HeapInt32Parent(pos))
 		MaxHeapInsert(MaxHeap, newElem, HeapInt32Parent(pos))
 	}
+}
+
+func MaxHeapReheapify(MaxHeap []int32, pos int) {
+	if 2*(pos+1)-1 >= len(MaxHeap) {
+		return
+	}
+	if MaxHeap[pos] < MaxHeap[2*(pos+1)-1] {
+		swapElem(MaxHeap, pos, 2*(pos+1)-1)
+		MaxHeapReheapify(MaxHeap, 2*(pos+1)-1)
+	}
+	if 2*(pos+1) >= len(MaxHeap) {
+		return
+	}
+	if MaxHeap[pos] < MaxHeap[2*(pos+1)] {
+		swapElem(MaxHeap, pos, 2*(pos+1))
+		MaxHeapReheapify(MaxHeap, 2*(pos+1))
+	}
+	return
+}
+
+func MinHeapReheapify(MaxHeap []int32, pos int) {
+	if 2*(pos+1)-1 >= len(MaxHeap) {
+		return
+	}
+	if MaxHeap[pos] > MaxHeap[2*(pos+1)-1] {
+		swapElem(MaxHeap, pos, 2*(pos+1)-1)
+		MaxHeapReheapify(MaxHeap, 2*(pos+1)-1)
+	}
+	if 2*(pos+1) >= len(MaxHeap) {
+		return
+	}
+	if MaxHeap[pos] > MaxHeap[2*(pos+1)] {
+		swapElem(MaxHeap, pos, 2*(pos+1))
+		MaxHeapReheapify(MaxHeap, 2*(pos+1))
+	}
+	return
 }
 
 func MinHeapInsert(MinHeap []int32, newElem int32, pos int) {
