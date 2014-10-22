@@ -24,6 +24,15 @@ func timeDecor2(intArrayFunc func([]int32, int, int), array []int32, start, end 
 
 }
 
+func timeDecor3(intArrayFunc func([]int32, int) (int32, int),
+	array []int32, intVal int) (int32, int) {
+	t1 := time.Now()
+	rval1, rval2 := intArrayFunc(array, intVal)
+	t2 := time.Now()
+	fmt.Println(t2.UnixNano() - t1.UnixNano())
+	return rval1, rval2
+}
+
 func isSorted(array []int32) bool {
 	for cntr := 0; cntr < len(array)-1; cntr++ {
 		if array[cntr+1] < array[cntr] {
@@ -33,12 +42,23 @@ func isSorted(array []int32) bool {
 	return true
 }
 
+func sameElems(array []int32) int {
+	ammountOfSame := 0
+	for cntr := 0; cntr < len(array)-1; cntr++ {
+		if array[cntr] == array[cntr+1] {
+			ammountOfSame++
+		}
+	}
+	return ammountOfSame
+}
+
 func testArray(array []int32) {
 	if isSorted(array) {
 		fmt.Println("sorted")
 	} else {
 		fmt.Println("not sorted")
 	}
+	fmt.Println(sameElems(array))
 }
 
 func copyArray(array1 []int32) []int32 {
@@ -49,33 +69,27 @@ func copyArray(array1 []int32) []int32 {
 	return array2
 }
 
-func drawSort(index1, index2, arrayLength int) {
-	for cntr := 0; cntr < arrayLength; cntr++ {
-		if cntr == index1 || cntr == index2 {
-			fmt.Print('|')
-		} else {
-			fmt.Print('.')
-		}
-	}
-	fmt.Println("")
-}
-
 func main() {
 	fmt.Println("hello")
 	initarray := make([]int32, 10000)
 	rand.Seed(time.Now().UnixNano())
 	for cntr := 0; cntr < cap(initarray); cntr++ {
-		initarray[cntr] = rand.Int31n(20000000)
+		initarray[cntr] = rand.Int31n(2000000000)
 	}
 	testArray(initarray)
 	array1 := copyArray(initarray)
 	//maxHeap := heap.BuildMaxHeapInt32(array1)
 	//minHeap := heap.BuildMinHeapInt32(array1)
+	fmt.Println("##### percentile ######")
+	array0 := copyArray(initarray)
+	perc, num := timeDecor3(sort.FindPercentile, array0, 50)
+	fmt.Println(perc, " ", num)
 	fmt.Println("#####  merge sort  #####")
 	timeDecor2(sort.MergeSort, array1, 0, len(array1)-1)
 	testArray(array1)
 	timeDecor2(sort.MergeSort, array1, 0, len(array1)-1)
 	array2 := copyArray(initarray)
+	fmt.Println(array1[num])
 	fmt.Println("#####  selection sort  #####")
 	timeDecor(sort.SelectionSort, array2)
 	testArray(array2)

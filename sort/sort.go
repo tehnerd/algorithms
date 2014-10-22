@@ -133,6 +133,23 @@ func partition(array []int32, low, high int) int {
 	return indexHigh
 }
 
+func FindPercentile(array []int32, percentile int) (int32, int) {
+	elemNum := int(float64(len(array)) * (float64(percentile) / 100))
+	low := 0
+	high := len(array) - 1
+	for low < high {
+		part := partition(array, low, high)
+		if part == elemNum {
+			return array[part], elemNum
+		} else if part > elemNum {
+			high = part - 1
+		} else if part < elemNum {
+			low = part + 1
+		}
+	}
+	return array[elemNum], elemNum
+}
+
 func HeapSort(array []int32) {
 	minHeap := heap.BuildMinHeapInt32(array)
 	for cntr := 0; cntr < len(array); cntr++ {
