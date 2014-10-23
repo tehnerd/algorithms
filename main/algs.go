@@ -3,6 +3,7 @@ package main
 import (
 	"algs/queues"
 	"algs/sort"
+	"algs/symboltables"
 	"fmt"
 	"math/rand"
 	"time"
@@ -31,6 +32,14 @@ func timeDecor3(intArrayFunc func([]int32, int) (int32, int),
 	t2 := time.Now()
 	fmt.Println(t2.UnixNano() - t1.UnixNano())
 	return rval1, rval2
+}
+
+func timeDecor4(testFunc func(int32) int32, tval int32) {
+	t1 := time.Now()
+	rval := testFunc(tval)
+	t2 := time.Now()
+	fmt.Println(rval)
+	fmt.Println(t2.UnixNano() - t1.UnixNano())
 }
 
 func isSorted(array []int32) bool {
@@ -120,4 +129,12 @@ func main() {
 		(&pq).Insert(initarray[cntr])
 	}
 	(&pq).DequeAll()
+	fmt.Println("##### linked lists #####")
+	var llist symboltables.LList
+	for cntr := 0; cntr < len(initarray); cntr++ {
+		(&llist).Add(int32(cntr), initarray[cntr])
+	}
+	tkey := rand.Int31n(20000)
+	timeDecor4((&llist).Get, tkey)
+	timeDecor4((&llist).Search, tkey)
 }
