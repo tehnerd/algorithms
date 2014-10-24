@@ -6,6 +6,8 @@ import (
 	"algs/symboltables"
 	"fmt"
 	"math/rand"
+	//build in sort
+	bsort "sort"
 	"time"
 )
 
@@ -80,10 +82,10 @@ func copyArray(array1 []int32) []int32 {
 
 func main() {
 	fmt.Println("hello")
-	initarray := make([]int32, 10000)
+	initarray := make([]int32, 100)
 	rand.Seed(time.Now().UnixNano())
 	for cntr := 0; cntr < cap(initarray); cntr++ {
-		initarray[cntr] = rand.Int31n(2000000000)
+		initarray[cntr] = rand.Int31n(200)
 	}
 	testArray(initarray)
 	array1 := copyArray(initarray)
@@ -97,9 +99,9 @@ func main() {
 	timeDecor2(sort.MergeSort, array1, 0, len(array1)-1)
 	testArray(array1)
 	timeDecor2(sort.MergeSort, array1, 0, len(array1)-1)
-	array2 := copyArray(initarray)
 	fmt.Println(array1[num])
 	fmt.Println("#####  selection sort  #####")
+	array2 := copyArray(initarray)
 	timeDecor(sort.SelectionSort, array2)
 	testArray(array2)
 	timeDecor(sort.SelectionSort, array2)
@@ -132,9 +134,16 @@ func main() {
 	fmt.Println("##### linked lists #####")
 	var llist symboltables.LList
 	for cntr := 0; cntr < len(initarray); cntr++ {
-		(&llist).Add(int32(cntr), initarray[cntr])
+		(&llist).Add(initarray[cntr], int32(cntr))
 	}
-	tkey := rand.Int31n(20000)
+	tkey := rand.Int31n(int32(len(initarray)))
 	timeDecor4((&llist).Get, tkey)
-	timeDecor4((&llist).Search, tkey)
+	fmt.Println(tkey)
+	fmt.Println("##### binary search ####")
+	var bsstruct symboltables.BinarySearchST
+	for cntr := 0; cntr < len(initarray); cntr++ {
+		(&bsstruct).Append(initarray[cntr], int32(cntr))
+	}
+	bsort.Sort(&bsstruct)
+	timeDecor4((&bsstruct).Search, tkey)
 }
