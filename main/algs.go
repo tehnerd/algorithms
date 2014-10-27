@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"math/rand"
 	//build in sort
-	bsort "sort"
+	//bsort "sort"
 	"time"
 )
 
@@ -82,10 +82,10 @@ func copyArray(array1 []int32) []int32 {
 
 func main() {
 	fmt.Println("hello")
-	initarray := make([]int32, 100)
+	initarray := make([]int32, 1000)
 	rand.Seed(time.Now().UnixNano())
 	for cntr := 0; cntr < cap(initarray); cntr++ {
-		initarray[cntr] = rand.Int31n(200)
+		initarray[cntr] = rand.Int31n(2000)
 	}
 	testArray(initarray)
 	array1 := copyArray(initarray)
@@ -144,6 +144,6 @@ func main() {
 	for cntr := 0; cntr < len(initarray); cntr++ {
 		(&bsstruct).Append(initarray[cntr], int32(cntr))
 	}
-	bsort.Sort(&bsstruct)
+	//bsort.Sort(&bsstruct)
 	timeDecor4((&bsstruct).Search, tkey)
 }

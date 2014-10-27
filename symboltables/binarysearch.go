@@ -14,7 +14,16 @@ type BinarySearchST struct {
 }
 
 func (bss *BinarySearchST) Append(key, value int32) {
-	bss.array = append(bss.array, BSTElem{key: key, value: value})
+	pos := bss.rank(key)
+	if pos < bss.Len() && bss.array[pos].key == key {
+		bss.array[pos].value = value
+		return
+	}
+	bss.array = append(bss.array, BSTElem{})
+	for cntr := bss.Len() - 1; cntr > pos; cntr-- {
+		bss.array[cntr] = bss.array[cntr-1]
+	}
+	bss.array[pos] = BSTElem{key: key, value: value}
 }
 
 func (bss *BinarySearchST) Print() {
@@ -33,6 +42,22 @@ func (bss *BinarySearchST) Less(i, j int) bool {
 
 func (bss *BinarySearchST) Swap(i, j int) {
 	bss.array[i], bss.array[j] = bss.array[j], bss.array[i]
+}
+
+func (bss *BinarySearchST) rank(key int32) int {
+	low := 0
+	high := bss.Len() - 1
+	for low <= high {
+		mid := low + (high-low)/2
+		if bss.array[mid].key > key {
+			high = mid - 1
+		} else if bss.array[mid].key < key {
+			low = mid + 1
+		} else {
+			return mid
+		}
+	}
+	return low
 }
 
 func (bss *BinarySearchST) Search(key int32) int32 {
