@@ -82,10 +82,10 @@ func copyArray(array1 []int32) []int32 {
 
 func main() {
 	fmt.Println("hello")
-	initarray := make([]int32, 1000)
+	initarray := make([]int32, 10000)
 	rand.Seed(time.Now().UnixNano())
 	for cntr := 0; cntr < cap(initarray); cntr++ {
-		initarray[cntr] = rand.Int31n(2000)
+		initarray[cntr] = rand.Int31n(20000)
 	}
 	testArray(initarray)
 	array1 := copyArray(initarray)
@@ -141,9 +141,24 @@ func main() {
 	fmt.Println(tkey)
 	fmt.Println("##### binary search ####")
 	var bsstruct symboltables.BinarySearchST
+	t1 := time.Now()
 	for cntr := 0; cntr < len(initarray); cntr++ {
 		(&bsstruct).Append(initarray[cntr], int32(cntr))
 	}
+	t2 := time.Now()
+	fmt.Println(t2.UnixNano() - t1.UnixNano())
 	//bsort.Sort(&bsstruct)
 	timeDecor4((&bsstruct).Search, tkey)
+	fmt.Println("##### Binary Search Tree #####")
+	var bst symboltables.BST
+	t1 = time.Now()
+	for cntr := 0; cntr < len(initarray); cntr++ {
+		(&bst).Put(initarray[cntr], int32(cntr))
+	}
+	t2 = time.Now()
+	fmt.Println(t2.UnixNano() - t1.UnixNano())
+	t1 = time.Now()
+	fmt.Println((&bst).Get(tkey))
+	t2 = time.Now()
+	fmt.Println(t2.UnixNano() - t1.UnixNano())
 }
