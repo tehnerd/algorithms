@@ -1,8 +1,8 @@
 package main
 
 import (
-	"algs/queues"
-	"algs/sort"
+	//"algs/queues"
+	//"algs/sort"
 	"algs/symboltables"
 	"fmt"
 	"math/rand"
@@ -82,83 +82,104 @@ func copyArray(array1 []int32) []int32 {
 
 func main() {
 	fmt.Println("hello")
-	initarray := make([]int32, 10000)
+	initarray := make([]int32, 30)
 	rand.Seed(time.Now().UnixNano())
 	for cntr := 0; cntr < cap(initarray); cntr++ {
-		initarray[cntr] = rand.Int31n(20000)
+		initarray[cntr] = int32(cntr) // rand.Int31n(2000000)
 	}
 	testArray(initarray)
-	array1 := copyArray(initarray)
-	//maxHeap := heap.BuildMaxHeapInt32(array1)
-	//minHeap := heap.BuildMinHeapInt32(array1)
-	fmt.Println("##### percentile ######")
-	array0 := copyArray(initarray)
-	perc, num := timeDecor3(sort.FindPercentile, array0, 50)
-	fmt.Println(perc, " ", num)
-	fmt.Println("#####  merge sort  #####")
-	timeDecor2(sort.MergeSort, array1, 0, len(array1)-1)
-	testArray(array1)
-	timeDecor2(sort.MergeSort, array1, 0, len(array1)-1)
-	fmt.Println(array1[num])
-	fmt.Println("#####  selection sort  #####")
-	array2 := copyArray(initarray)
-	timeDecor(sort.SelectionSort, array2)
-	testArray(array2)
-	timeDecor(sort.SelectionSort, array2)
-	fmt.Println("#####  insertion sort  #####")
-	array3 := copyArray(initarray)
-	timeDecor(sort.InsertionSort, array3)
-	testArray(array3)
-	timeDecor(sort.InsertionSort, array3)
-	fmt.Println("#####  shell sort  #####")
-	array4 := copyArray(initarray)
-	timeDecor(sort.ShellSort, array4)
-	testArray(array4)
-	timeDecor(sort.ShellSort, array4)
-	fmt.Println("#####  quick sort  #####")
-	array5 := copyArray(initarray)
-	timeDecor2(sort.QuickSort, array5, 0, len(array5)-1)
-	testArray(array5)
-	timeDecor2(sort.QuickSort, array5, 0, len(array5)-1)
-	fmt.Println("##### heap sort #####")
-	array6 := copyArray(initarray)
-	timeDecor(sort.HeapSort, array6)
-	testArray(array6)
-	timeDecor(sort.HeapSort, array6)
-	fmt.Println("##### priority queue #####")
-	var pq queues.PQueue
-	for cntr := 0; cntr < len(initarray); cntr++ {
-		(&pq).Insert(initarray[cntr])
-	}
-	(&pq).DequeAll()
-	fmt.Println("##### linked lists #####")
-	var llist symboltables.LList
-	for cntr := 0; cntr < len(initarray); cntr++ {
-		(&llist).Add(initarray[cntr], int32(cntr))
-	}
-	tkey := rand.Int31n(int32(len(initarray)))
-	timeDecor4((&llist).Get, tkey)
-	fmt.Println(tkey)
-	fmt.Println("##### binary search ####")
-	var bsstruct symboltables.BinarySearchST
-	t1 := time.Now()
-	for cntr := 0; cntr < len(initarray); cntr++ {
-		(&bsstruct).Append(initarray[cntr], int32(cntr))
-	}
-	t2 := time.Now()
-	fmt.Println(t2.UnixNano() - t1.UnixNano())
-	//bsort.Sort(&bsstruct)
-	timeDecor4((&bsstruct).Search, tkey)
+	//array0 := copyArray(initarray)
+	//perc, num := timeDecor3(sort.FindPercentile, array0, 50)
+	//fmt.Println(perc, " ", num)
+
+	/*
+				array1 := copyArray(initarray)
+				//maxHeap := heap.BuildMaxHeapInt32(array1)
+				//minHeap := heap.BuildMinHeapInt32(array1)
+				fmt.Println("##### percentile ######")
+				array0 := copyArray(initarray)
+				perc, num := timeDecor3(sort.FindPercentile, array0, 50)
+				fmt.Println(perc, " ", num)
+				fmt.Println("#####  merge sort  #####")
+				timeDecor2(sort.MergeSort, array1, 0, len(array1)-1)
+				testArray(array1)
+				timeDecor2(sort.MergeSort, array1, 0, len(array1)-1)
+				fmt.Println(array1[num])
+				fmt.Println("#####  selection sort  #####")
+				array2 := copyArray(initarray)
+				timeDecor(sort.SelectionSort, array2)
+				testArray(array2)
+				timeDecor(sort.SelectionSort, array2)
+				fmt.Println("#####  insertion sort  #####")
+				array3 := copyArray(initarray)
+				timeDecor(sort.InsertionSort, array3)
+				testArray(array3)
+				timeDecor(sort.InsertionSort, array3)
+				fmt.Println("#####  shell sort  #####")
+				array4 := copyArray(initarray)
+				timeDecor(sort.ShellSort, array4)
+				testArray(array4)
+				timeDecor(sort.ShellSort, array4)
+				fmt.Println("#####  quick sort  #####")
+				array5 := copyArray(initarray)
+				timeDecor2(sort.QuickSort, array5, 0, len(array5)-1)
+				testArray(array5)
+				timeDecor2(sort.QuickSort, array5, 0, len(array5)-1)
+				fmt.Println("##### heap sort #####")
+				array6 := copyArray(initarray)
+				timeDecor(sort.HeapSort, array6)
+				testArray(array6)
+				timeDecor(sort.HeapSort, array6)
+				fmt.Println("##### priority queue #####")
+				var pq queues.PQueue
+				for cntr := 0; cntr < len(initarray); cntr++ {
+					(&pq).Insert(initarray[cntr])
+				}
+				(&pq).DequeAll()
+			fmt.Println("##### linked lists #####")
+			var llist symboltables.LList
+			for cntr := 0; cntr < len(initarray); cntr++ {
+				(&llist).Add(initarray[cntr], int32(cntr))
+			}
+			timeDecor4((&llist).Get, tkey)
+			fmt.Println(tkey)
+
+		fmt.Println("##### binary search ####")
+		var bsstruct symboltables.BinarySearchST
+		t1 := time.Now()
+		for cntr := 0; cntr < len(initarray); cntr++ {
+			(&bsstruct).Append(initarray[cntr], int32(cntr))
+		}
+		t2 := time.Now()
+		fmt.Println(t2.UnixNano() - t1.UnixNano())
+		//bsort.Sort(&bsstruct)
+		timeDecor4((&bsstruct).Search, tkey)
+	*/
 	fmt.Println("##### Binary Search Tree #####")
+	//tkey := rand.Int31n(int32(len(initarray)))
+	tkey := int32(len(initarray) - 2)
 	var bst symboltables.BST
-	t1 = time.Now()
+	fmt.Println("create time")
+	t1 := time.Now()
 	for cntr := 0; cntr < len(initarray); cntr++ {
 		(&bst).Put(initarray[cntr], int32(cntr))
 	}
-	t2 = time.Now()
+	t2 := time.Now()
 	fmt.Println(t2.UnixNano() - t1.UnixNano())
+	timeDecor4((&bst).Get, tkey)
+	timeDecor4((&bst).Get, tkey)
+	//	fmt.Println((&bst).Get(tkey))
+	fmt.Println("##### Red Black Tree #####")
+	var rbt symboltables.RBT
+	fmt.Println("create time")
 	t1 = time.Now()
-	fmt.Println((&bst).Get(tkey))
+	for cntr := 0; cntr < len(initarray); cntr++ {
+		(&rbt).Put(initarray[cntr], int32(cntr))
+	}
 	t2 = time.Now()
 	fmt.Println(t2.UnixNano() - t1.UnixNano())
+	timeDecor4((&rbt).Get, tkey)
+	timeDecor4((&rbt).Get, tkey)
+	//	fmt.Println((&bst).Get(tkey))
+
 }
