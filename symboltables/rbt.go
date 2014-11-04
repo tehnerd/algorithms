@@ -1,7 +1,5 @@
 package symboltables
 
-import "fmt"
-
 const (
 	RED   bool = true
 	BLACK bool = false
@@ -18,14 +16,6 @@ type RBTNode struct {
 
 func (rbtn *RBTNode) size() int {
 	return rbtn.elemCount
-}
-
-func isRed2(rbtn *RBTNode) bool {
-	if rbtn == nil {
-		return false
-	} else {
-		return (*rbtn).color == RED
-	}
 }
 
 func (rbtn *RBTNode) isRed() bool {
@@ -48,7 +38,7 @@ func (rbtn *RBTNode) rotateLeft() *RBTNode {
 func (rbtn *RBTNode) rotateRight() *RBTNode {
 	leftNode := rbtn.left
 	rbtn.left = leftNode.right
-	leftNode.left = rbtn
+	leftNode.right = rbtn
 	leftNode.color = rbtn.color
 	rbtn.color = RED
 	return leftNode
@@ -76,10 +66,8 @@ func (rbt *RBT) get(root *RBTNode, key int32) int32 {
 	if key == root.key {
 		return root.value
 	} else if key < root.key && root.left != nil {
-		fmt.Println("further")
 		return rbt.get(root.left, key)
 	} else if key > root.key && root.right != nil {
-		fmt.Println("further")
 		return rbt.get(root.right, key)
 	} else {
 		return -1
@@ -87,29 +75,21 @@ func (rbt *RBT) get(root *RBTNode, key int32) int32 {
 }
 
 func (rbt *RBT) Put(key, value int32) {
-	rbt.put(rbt.root, key, value)
+	rbt.root = rbt.put(rbt.root, key, value)
 	rbt.root.color = BLACK
 }
 
 func (rbt *RBT) put(root *RBTNode, key int32, value int32) *RBTNode {
 	if root == nil {
-		rbt.root = &RBTNode{key: key, value: value, color: RED}
-		root = rbt.root
+		return &RBTNode{key: key, value: value, color: RED}
 	} else if key < root.key {
-		if root.left != nil {
-			root.left = rbt.put(root.left, key, value)
-		} else {
-			root.left = &RBTNode{key: key, value: value, color: RED}
-		}
+		root.left = rbt.put(root.left, key, value)
 	} else if key > root.key {
-		if root.right != nil {
-			root.right = rbt.put(root.right, key, value)
-		} else {
-			root.right = &RBTNode{key: key, value: value, color: RED}
-		}
+		root.right = rbt.put(root.right, key, value)
 	} else {
 		root.value = value
 	}
+
 	if root.right.isRed() && !root.left.isRed() {
 		root = root.rotateLeft()
 	}

@@ -82,10 +82,10 @@ func copyArray(array1 []int32) []int32 {
 
 func main() {
 	fmt.Println("hello")
-	initarray := make([]int32, 30)
+	initarray := make([]int32, 100000)
 	rand.Seed(time.Now().UnixNano())
 	for cntr := 0; cntr < cap(initarray); cntr++ {
-		initarray[cntr] = int32(cntr) // rand.Int31n(2000000)
+		initarray[cntr] = rand.Int31n(int32(len(initarray)))
 	}
 	testArray(initarray)
 	//array0 := copyArray(initarray)
@@ -156,8 +156,7 @@ func main() {
 		timeDecor4((&bsstruct).Search, tkey)
 	*/
 	fmt.Println("##### Binary Search Tree #####")
-	//tkey := rand.Int31n(int32(len(initarray)))
-	tkey := int32(len(initarray) - 2)
+	tkey := rand.Int31n(int32(len(initarray)))
 	var bst symboltables.BST
 	fmt.Println("create time")
 	t1 := time.Now()
