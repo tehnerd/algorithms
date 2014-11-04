@@ -179,6 +179,26 @@ func main() {
 	fmt.Println(t2.UnixNano() - t1.UnixNano())
 	timeDecor4((&rbt).Get, tkey)
 	timeDecor4((&rbt).Get, tkey)
+	fmt.Println("rbt delete min,max")
+	(&rbt).Put(int32(-100), int32(2307))
+	fmt.Println((&rbt).Get(int32(-100)))
+	fmt.Println((&rbt).FindMin())
+	(&rbt).DeleteMin()
+	fmt.Println((&rbt).FindMin())
+	fmt.Println((&rbt).Get(int32(-100)))
+	(&rbt).Put(int32(1<<31-1), int32(51574168))
+	fmt.Println((&rbt).Get(int32(1<<31 - 1)))
+	(&rbt).DeleteMax()
+	fmt.Println((&rbt).Get(int32(1<<31 - 1)))
+
+	(&rbt).Put(int32(-100), int32(2307))
+	fmt.Println((&rbt).FindMin())
+	(&rbt).Delete(int32(-100))
+	fmt.Println((&rbt).FindMin())
+	for {
+		(&rbt).Put(int32(10), int32(10))
+		(&rbt).Delete(int32(10))
+	}
 	//	fmt.Println((&bst).Get(tkey))
 
 }
