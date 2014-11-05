@@ -195,10 +195,6 @@ func main() {
 	fmt.Println((&rbt).FindMin())
 	(&rbt).Delete(int32(-100))
 	fmt.Println((&rbt).FindMin())
-	for {
-		(&rbt).Put(int32(10), int32(10))
-		(&rbt).Delete(int32(10))
-	}
 	//	fmt.Println((&bst).Get(tkey))
 
 }
