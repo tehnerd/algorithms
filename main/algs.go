@@ -8,6 +8,7 @@ import (
 	"math/rand"
 	//build in sort
 	//bsort "sort"
+	"algs/graphs"
 	"time"
 )
 
@@ -196,5 +197,20 @@ func main() {
 	(&rbt).Delete(int32(-100))
 	fmt.Println((&rbt).FindMin())
 	//	fmt.Println((&bst).Get(tkey))
+	fmt.Println("GRAPHS")
+	var g1 graphs.Graph
+	(&g1).AddEdge("a", "b")
+	(&g1).AddEdge("a", "c")
+	(&g1).AddEdge("a", "g")
+	(&g1).AddEdge("a", "z")
+	(&g1).AddEdge("g", "z")
+	(&g1).Print()
+	(&g1).RemoveEdge("a", "g")
+	(&g1).Print()
+	fmt.Println((&g1).Vertices())
+	var dfs = new(graphs.DepthFirstSearch)
+	dfs.Init(&g1)
+	dfs.DFS(&g1, "a")
+	fmt.Println(dfs.IsConnected())
 
 }
