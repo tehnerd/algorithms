@@ -9,6 +9,9 @@ import (
 	//build in sort
 	//bsort "sort"
 	"algs/graphs"
+	"bufio"
+	"os"
+	"strings"
 	"time"
 )
 
@@ -79,6 +82,29 @@ func copyArray(array1 []int32) []int32 {
 		array2[cntr] = array1[cntr]
 	}
 	return array2
+}
+
+func ReadGraph() *graphs.Graph {
+	graph := new(graphs.Graph)
+	fd, err := os.Open(os.Args[1])
+	defer fd.Close()
+	if err != nil {
+		os.Exit(1)
+	}
+	reader := bufio.NewReader(fd)
+	line, err := reader.ReadString('\n')
+	for err == nil {
+		fields := strings.Fields(line)
+		if len(fields) > 0 {
+			vertice := fields[0]
+			vertice = strings.Split(vertice, ":")[0]
+			for cntr := 1; cntr < len(fields); cntr += 2 {
+				graph.AddEdge(vertice, fields[cntr])
+			}
+		}
+		line, err = reader.ReadString('\n')
+	}
+	return graph
 }
 
 func main() {
@@ -208,9 +234,12 @@ func main() {
 	(&g1).RemoveEdge("a", "g")
 	(&g1).Print()
 	fmt.Println((&g1).Vertices())
-	var dfs = new(graphs.DepthFirstSearch)
-	dfs.Init(&g1)
-	dfs.DFS(&g1, "a")
-	fmt.Println(dfs.IsConnected())
-
+	fmt.Println(graphs.IsConnected(&g1, "a"))
+	fmt.Println(graphs.PathTo(&g1, "a", "g"))
+	if len(os.Args) > 1 {
+		g := ReadGraph()
+		if len(os.Args) >= 4 {
+			fmt.Println(graphs.PathTo(g, os.Args[2], os.Args[3]))
+		}
+	}
 }
