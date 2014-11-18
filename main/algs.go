@@ -236,10 +236,13 @@ func main() {
 	fmt.Println((&g1).Vertices())
 	fmt.Println(graphs.IsConnected(&g1, "a"))
 	fmt.Println(graphs.PathTo(&g1, "a", "g"))
+	bfp := new(graphs.BreadthFirstPath)
+	fmt.Println(bfp.BFPHasPathTo(&g1, "a", "g"))
 	if len(os.Args) > 1 {
 		g := ReadGraph()
 		if len(os.Args) >= 4 {
 			fmt.Println(graphs.PathTo(g, os.Args[2], os.Args[3]))
+			fmt.Println(bfp.BFPPathTo(g, os.Args[2], os.Args[3]))
 		}
 	}
 }
