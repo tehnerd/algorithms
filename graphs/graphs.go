@@ -71,7 +71,13 @@ func (g *Graph) AddEdgeUnidirectDistance(v1, v2 string, distance int32) {
 	if _, exist := g.adjacency[v1]; !exist {
 		g.adjacency[v1] = make(map[string]int32)
 	}
-	g.adjacency[v1][v2] = distance
+	if value, exist := g.adjacency[v1][v2]; exist {
+		if distance < value {
+			g.adjacency[v1][v2] = distance
+		}
+	} else {
+		g.adjacency[v1][v2] = distance
+	}
 }
 
 func (g *Graph) RemoveEdge(v1, v2 string) {

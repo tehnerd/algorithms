@@ -11,6 +11,7 @@ import (
 	"algs/graphs"
 	"bufio"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -99,7 +100,9 @@ func ReadGraph() *graphs.Graph {
 			vertice := fields[0]
 			vertice = strings.Split(vertice, ":")[0]
 			for cntr := 1; cntr < len(fields); cntr += 2 {
-				graph.AddEdge(vertice, fields[cntr])
+				distance, _ := strconv.Atoi(fields[cntr+1])
+				graph.AddEdgeUnidirectDistance(vertice, fields[cntr],
+					int32(distance))
 			}
 		}
 		line, err = reader.ReadString('\n')
@@ -240,9 +243,11 @@ func main() {
 	fmt.Println(bfp.BFPHasPathTo(&g1, "a", "g"))
 	if len(os.Args) > 1 {
 		g := ReadGraph()
-		if len(os.Args) >= 4 {
-			fmt.Println(graphs.PathTo(g, os.Args[2], os.Args[3]))
-			fmt.Println(bfp.BFPPathTo(g, os.Args[2], os.Args[3]))
+		if len(os.Args) >= 3 {
+			var spf = new(graphs.SPF)
+			spf.Init(g)
+			spf.SP(os.Args[2])
+			fmt.Println(spf.SPFDist())
 		}
 	}
 }
