@@ -1,8 +1,9 @@
 package graphs
 
 import (
-	"algs/heap"
+	"algs/symboltables"
 	"fmt"
+	"reflect"
 	"time"
 )
 
@@ -13,41 +14,23 @@ type Edge struct {
 	dist int32
 }
 
-type EdgesPQ struct {
-	edges []Edge
-}
-
-func (epq *EdgesPQ) Len() int {
-	return len(epq.edges)
-}
-
-func (epq *EdgesPQ) Compare(i, j int) int {
-	if epq.edges[i].dist < epq.edges[j].dist {
-		return -1
-	} else if epq.edges[i].dist > epq.edges[j].dist {
-		return 1
-	} else {
-		return 0
+func (e1 Edge) Compare(e2ckv symboltables.ComparableKV) int {
+	switch e2 := e2ckv.(type) {
+	case Edge:
+		if e1.dist < e2.dist {
+			return -1
+		} else if e1.dist > e2.dist {
+			return 1
+		} else if e1.to < e2.to {
+			return -1
+		} else if e1.to < e2.to {
+			return 1
+		} else {
+			return 0
+		}
+	default:
+		return -100
 	}
-}
-
-func (epq *EdgesPQ) Swap(i, j int) {
-	tmp := epq.edges[i]
-	epq.edges[i] = epq.edges[j]
-	epq.edges[j] = tmp
-}
-
-func (epq *EdgesPQ) Insert(e Edge) {
-	epq.edges = append(epq.edges, e)
-	heap.MinHeapCheck(epq, len(epq.edges)-1)
-}
-
-func (epq *EdgesPQ) Remove() Edge {
-	edge := epq.edges[0]
-	epq.edges[0] = epq.edges[len(epq.edges)-1]
-	epq.edges = epq.edges[:len(epq.edges)-1]
-	heap.MinHeapCheck(epq, 0)
-	return edge
 }
 
 type SPF struct {
@@ -55,7 +38,7 @@ type SPF struct {
 	spt    map[string]string
 	distTo map[string]int32
 	pq     map[string]int32 //TODO: add RBT instead of map
-	epq    *EdgesPQ
+	epq    *symboltables.RBT
 	Source string
 }
 
@@ -63,9 +46,8 @@ func (spf *SPF) Init(g *Graph) {
 	spf.graph = g
 	spf.spt = make(map[string]string)
 	spf.pq = make(map[string]int32)
-	spf.epq = new(EdgesPQ)
-	spf.epq.edges = make([]Edge, 0)
 	spf.distTo = make(map[string]int32)
+	spf.epq = new(symboltables.RBT)
 	for _, v := range (spf.graph).Vertices() {
 		spf.distTo[v] = SPF_INFINITY
 	}
@@ -75,8 +57,15 @@ func (spf *SPF) SP(s string) {
 	spf.Source = s
 	spf.distTo[s] = 0
 	spf.pq[s] = 0
+	spf.epq.Put(Edge{to: s, dist: 0})
+	/*
+		t1 := time.Now()
+		for len(spf.pq) > 0 {
+			spf.relax()
+		}
+	*/
 	t1 := time.Now()
-	for len(spf.pq) > 0 {
+	for spf.epq.Len() > 0 {
 		spf.relax()
 	}
 	t2 := time.Now()
@@ -84,25 +73,33 @@ func (spf *SPF) SP(s string) {
 }
 
 func (spf *SPF) relax() {
-	min := "none"
-	minVal := int32(-1)
-	for k, v := range spf.pq {
-		if (minVal == -1) || (v <= minVal) {
-			minVal = v
-			min = k
+	/*
+		min := "none"
+		minVal := int32(-1)
+		for k, v := range spf.pq {
+			if (minVal == -1) || (v <= minVal) {
+				minVal = v
+				min = k
+			}
 		}
-	}
-	delete(spf.pq, min)
+	*/
+	Min := spf.epq.FindMin()
+	min := reflect.ValueOf(Min).Interface().(Edge).to
+	spf.epq.DeleteMin()
+	//delete(spf.pq, min)
 	for _, adj := range spf.graph.Adjacency(min) {
 		weight := spf.graph.adjacency[min][adj]
 		if spf.distTo[adj] > spf.distTo[min]+weight {
 			spf.distTo[adj] = spf.distTo[min] + weight
 			spf.spt[adj] = min
-			if _, exist := spf.pq[adj]; exist {
-				spf.pq[adj] = spf.distTo[adj]
-			} else {
-				spf.pq[adj] = spf.distTo[adj]
-			}
+			spf.epq.Put(Edge{to: adj, dist: spf.distTo[adj]})
+			/*
+				if _, exist := spf.pq[adj]; exist {
+					spf.pq[adj] = spf.distTo[adj]
+				} else {
+					spf.pq[adj] = spf.distTo[adj]
+				}
+			*/
 		}
 	}
 }

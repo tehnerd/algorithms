@@ -65,8 +65,21 @@ func (rbtn *RBTNode) flipColors() {
 	}
 }
 
+func (rbtn *RBTNode) flipColorsDelete() {
+	if rbtn == nil {
+		return
+	}
+	rbtn.color = BLACK
+	if rbtn.left != nil {
+		rbtn.left.color = RED
+	}
+	if rbtn.right != nil {
+		rbtn.right.color = RED
+	}
+}
+
 func (rbtn *RBTNode) moveRedLeft() *RBTNode {
-	rbtn.flipColors()
+	rbtn.flipColorsDelete()
 	if rbtn.right == nil {
 		return rbtn
 	}
@@ -78,7 +91,7 @@ func (rbtn *RBTNode) moveRedLeft() *RBTNode {
 }
 
 func (rbtn *RBTNode) moveRedRight() *RBTNode {
-	rbtn.flipColors()
+	rbtn.flipColorsDelete()
 	if rbtn.left == nil {
 		return rbtn
 	}
@@ -93,6 +106,9 @@ func (rbt *RBT) DeleteMin() {
 		rbt.root.color = RED
 	}
 	rbt.root = rbt.root.deleteMin(rbt)
+	if rbt.Len() > 0 {
+		rbt.root.color = BLACK
+	}
 }
 
 func (rbtn *RBTNode) deleteMin(rbt *RBT) *RBTNode {
@@ -112,6 +128,10 @@ func (rbt *RBT) DeleteMax() {
 		rbt.root.color = RED
 	}
 	rbt.root = rbt.root.deleteMax(rbt)
+	if rbt.Len() > 0 {
+		rbt.root.color = BLACK
+	}
+
 }
 
 func (rbtn *RBTNode) deleteMax(rbt *RBT) *RBTNode {
@@ -165,10 +185,11 @@ func (rbtn *RBTNode) deleteKey(ckv ComparableKV, rbt *RBT) *RBTNode {
 }
 
 func (rbtn *RBTNode) findMin() *RBTNode {
-	if rbtn.left != nil {
+	if rbtn.left == nil {
+		return rbtn
+	} else {
 		return rbtn.left.findMin()
 	}
-	return rbtn
 }
 
 func (rbt *RBT) FindMin() ComparableKV {
@@ -187,7 +208,7 @@ func (rbtn *RBTNode) balance() *RBTNode {
 		rbtn = rbtn.rotateRight()
 	}
 	if rbtn.right.isRed() && rbtn.left.isRed() {
-		rbtn.flipColors()
+		rbtn.flipColorsDelete()
 	}
 	return rbtn
 
