@@ -156,7 +156,7 @@ func (tc2 TestComparable2) Compare(ival symboltables.ComparableKV) int {
 
 func main() {
 	fmt.Println("hello")
-	initarray := make([]int32, 1000000)
+	initarray := make([]int32, 1000)
 	rand.Seed(time.Now().UnixNano())
 	for cntr := 0; cntr < cap(initarray); cntr++ {
 		initarray[cntr] = rand.Int31n(int32(len(initarray)))
