@@ -5,21 +5,25 @@ const (
 	BLACK bool = false
 )
 
+type ComparableKV interface {
+	/*
+		a.Compare(b); returns -1 if a<b
+		1 if a>b
+		0 if equal
+	*/
+	Compare(ckv ComparableKV) int
+}
+
 type RBTNode struct {
-	key       int32
-	value     int32
-	left      *RBTNode
-	right     *RBTNode
-	color     bool
-	elemCount int
+	kv    ComparableKV
+	left  *RBTNode
+	right *RBTNode
+	color bool
 }
 
 type RBT struct {
-	root *RBTNode
-}
-
-func (rbtn *RBTNode) size() int {
-	return rbtn.elemCount
+	root      *RBTNode
+	elemCount int64
 }
 
 func (rbtn *RBTNode) isRed() bool {
@@ -88,17 +92,18 @@ func (rbt *RBT) DeleteMin() {
 	if !rbt.root.left.isRed() && !rbt.root.right.isRed() {
 		rbt.root.color = RED
 	}
-	rbt.root = rbt.root.deleteMin()
+	rbt.root = rbt.root.deleteMin(rbt)
 }
 
-func (rbtn *RBTNode) deleteMin() *RBTNode {
+func (rbtn *RBTNode) deleteMin(rbt *RBT) *RBTNode {
 	if rbtn.left == nil {
+		rbt.elemCount -= 1
 		return nil
 	}
 	if !rbtn.left.isRed() && !rbtn.left.left.isRed() {
 		rbtn = rbtn.moveRedLeft()
 	}
-	rbtn.left = rbtn.left.deleteMin()
+	rbtn.left = rbtn.left.deleteMin(rbt)
 	return rbtn.balance()
 }
 
@@ -106,53 +111,54 @@ func (rbt *RBT) DeleteMax() {
 	if !rbt.root.left.isRed() && !rbt.root.right.isRed() {
 		rbt.root.color = RED
 	}
-	rbt.root = rbt.root.deleteMax()
+	rbt.root = rbt.root.deleteMax(rbt)
 }
 
-func (rbtn *RBTNode) deleteMax() *RBTNode {
+func (rbtn *RBTNode) deleteMax(rbt *RBT) *RBTNode {
 	if rbtn.left.isRed() {
 		rbtn = rbtn.rotateRight()
 	}
 	if rbtn.right == nil {
+		rbt.elemCount -= 1
 		return nil
 	}
 	if !rbtn.right.isRed() && !rbtn.right.left.isRed() {
 		rbtn = rbtn.moveRedRight()
 	}
-	rbtn.right = rbtn.right.deleteMax()
+	rbtn.right = rbtn.right.deleteMax(rbt)
 	return rbtn.balance()
 }
 
-func (rbt *RBT) Delete(key int32) {
+func (rbt *RBT) Delete(ckv ComparableKV) {
 	if !rbt.root.left.isRed() && !rbt.root.right.isRed() {
 		rbt.root.color = RED
 	}
-	rbt.root = rbt.root.deleteKey(key)
+	rbt.root = rbt.root.deleteKey(ckv, rbt)
 }
 
-func (rbtn *RBTNode) deleteKey(key int32) *RBTNode {
-	if key < rbtn.key {
+func (rbtn *RBTNode) deleteKey(ckv ComparableKV, rbt *RBT) *RBTNode {
+	if ckv.Compare(rbtn.kv) == -1 {
 		if !rbtn.left.isRed() && !rbtn.left.left.isRed() {
 			rbtn = rbtn.moveRedLeft()
 		}
-		rbtn.left = rbtn.left.deleteKey(key)
+		rbtn.left = rbtn.left.deleteKey(ckv, rbt)
 	} else {
 		if rbtn.left.isRed() {
 			rbtn = rbtn.rotateRight()
 		}
-		if key == rbtn.key && rbtn.right == nil {
+		if ckv.Compare(rbtn.kv) == 0 && rbtn.right == nil {
+			rbt.elemCount -= 1
 			return nil
 		}
 		if !rbtn.right.isRed() && !rbtn.right.left.isRed() {
 			rbtn = rbtn.moveRedRight()
 		}
-		if key == rbtn.key {
+		if ckv.Compare(rbtn.kv) == 0 {
 			tmpNode := rbtn.right.findMin()
-			rbtn.key = tmpNode.key
-			rbtn.value = tmpNode.value
-			rbtn.right = rbtn.deleteMin()
+			rbtn.kv = tmpNode.kv
+			rbtn.right = rbtn.deleteMin(rbt)
 		} else {
-			rbtn.right = rbtn.right.deleteKey(key)
+			rbtn.right = rbtn.right.deleteKey(ckv, rbt)
 		}
 	}
 	return rbtn.balance()
@@ -165,9 +171,9 @@ func (rbtn *RBTNode) findMin() *RBTNode {
 	return rbtn
 }
 
-func (rbt *RBT) FindMin() int32 {
+func (rbt *RBT) FindMin() ComparableKV {
 	min := rbt.root.findMin()
-	return min.value
+	return min.kv
 }
 
 func (rbtn *RBTNode) balance() *RBTNode {
@@ -187,40 +193,50 @@ func (rbtn *RBTNode) balance() *RBTNode {
 
 }
 
-func (rbt *RBT) Size() int {
-	return rbt.root.size()
+func (rbt *RBT) Len() int64 {
+	return rbt.elemCount
 }
 
-func (rbt *RBT) Get(key int32) int32 {
+/*
+	ComparableKV could have lots of fields. in this construstion we can pass
+	ckv which consists only fields, used by Compare implementation, and if
+	we cand find such a node, that ckv.Compare(node)==0, we returns that node
+	with all the fields. For example:
+	Comparable kv is (key,value) struct, we can pass (key,nil) and if in rbt
+	exists node with the same key, we returns (key,value)
+*/
+func (rbt *RBT) Get(key ComparableKV) ComparableKV {
 	return rbt.get(rbt.root, key)
 }
 
-func (rbt *RBT) get(root *RBTNode, key int32) int32 {
-	if key == root.key {
-		return root.value
-	} else if key < root.key && root.left != nil {
+func (rbt *RBT) get(root *RBTNode, key ComparableKV) ComparableKV {
+	if key.Compare(root.kv) == 0 {
+		return root.kv
+	} else if key.Compare(root.kv) == -1 && root.left != nil {
 		return rbt.get(root.left, key)
-	} else if key > root.key && root.right != nil {
+	} else if key.Compare(root.kv) == 1 && root.right != nil {
 		return rbt.get(root.right, key)
 	} else {
-		return -1
+		var noneExist ComparableKV
+		return noneExist
 	}
 }
 
-func (rbt *RBT) Put(key, value int32) {
-	rbt.root = rbt.put(rbt.root, key, value)
+func (rbt *RBT) Put(kv ComparableKV) {
+	rbt.root = rbt.put(rbt.root, kv)
 	rbt.root.color = BLACK
 }
 
-func (rbt *RBT) put(root *RBTNode, key int32, value int32) *RBTNode {
+func (rbt *RBT) put(root *RBTNode, kv ComparableKV) *RBTNode {
 	if root == nil {
-		return &RBTNode{key: key, value: value, color: RED}
-	} else if key < root.key {
-		root.left = rbt.put(root.left, key, value)
-	} else if key > root.key {
-		root.right = rbt.put(root.right, key, value)
+		rbt.elemCount += 1
+		return &RBTNode{kv: kv, color: RED}
+	} else if kv.Compare(root.kv) == -1 {
+		root.left = rbt.put(root.left, kv)
+	} else if kv.Compare(root.kv) == 1 {
+		root.right = rbt.put(root.right, kv)
 	} else {
-		root.value = value
+		root.kv = kv
 	}
 
 	if root.right.isRed() && !root.left.isRed() {

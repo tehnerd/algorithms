@@ -1,9 +1,5 @@
 package sort
 
-import (
-	"algs/heap"
-)
-
 func MergeSort(Array []int32, low, high int) {
 	if low < high {
 		middle := (low + high) / 2

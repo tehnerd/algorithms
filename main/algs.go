@@ -1,9 +1,9 @@
 package main
 
 import (
-	"algs/heap"
-	"algs/queues"
-	//"algs/sort"
+	//"algs/heap"
+	//"algs/queues"
+	"algs/sort"
 	"algs/symboltables"
 	"fmt"
 	"math/rand"
@@ -66,6 +66,7 @@ func sameElems(array []int32) int {
 			ammountOfSame++
 		}
 	}
+	fmt.Println(len(array) - ammountOfSame)
 	return ammountOfSame
 }
 
@@ -133,9 +134,29 @@ func (tc TestComparable) Swap(i, j int) {
 	tc[j] = tmp
 }
 
+type TestComparable2 struct {
+	key   int32
+	value int32
+}
+
+func (tc2 TestComparable2) Compare(ival symboltables.ComparableKV) int {
+	switch val := ival.(type) {
+	case TestComparable2:
+		if tc2.key < val.key {
+			return -1
+		} else if tc2.key > val.key {
+			return 1
+		} else {
+			return 0
+		}
+	default:
+		return -100
+	}
+}
+
 func main() {
 	fmt.Println("hello")
-	initarray := make([]int32, 100)
+	initarray := make([]int32, 1000000)
 	rand.Seed(time.Now().UnixNano())
 	for cntr := 0; cntr < cap(initarray); cntr++ {
 		initarray[cntr] = rand.Int31n(int32(len(initarray)))
@@ -173,48 +194,50 @@ func main() {
 		timeDecor(sort.ShellSort, array4)
 		testArray(array4)
 		timeDecor(sort.ShellSort, array4)
-		fmt.Println("#####  quick sort  #####")
-		array5 := copyArray(initarray)
-		timeDecor2(sort.QuickSort, array5, 0, len(array5)-1)
-		testArray(array5)
-		timeDecor2(sort.QuickSort, array5, 0, len(array5)-1)
 	*/
-	array6 := make(TestComparable, 0)
-	for cntr := 0; cntr < len(initarray); cntr++ {
-		array6 = append(array6, initarray[cntr])
-	}
-	fmt.Println(array6)
-	heap.BuildMinHeap(array6)
-	fmt.Println(array6)
-
-	fmt.Println("##### priority queue #####")
-	var pq queues.PQueueInt32
-	for cntr := 0; cntr < len(initarray); cntr++ {
-		(&pq).Insert(initarray[cntr])
-	}
-	(&pq).DequeAll()
+	fmt.Println("#####  quick sort  #####")
+	array5 := copyArray(initarray)
+	timeDecor2(sort.QuickSort, array5, 0, len(array5)-1)
+	sameElems(array5)
 	/*
-			fmt.Println("##### linked lists #####")
-			var llist symboltables.LList
-			for cntr := 0; cntr < len(initarray); cntr++ {
-				(&llist).Add(initarray[cntr], int32(cntr))
-			}
-			timeDecor4((&llist).Get, tkey)
-			fmt.Println(tkey)
-
-		fmt.Println("##### binary search ####")
-		var bsstruct symboltables.BinarySearchST
-		t1 := time.Now()
+			testArray(array5)
+			timeDecor2(sort.QuickSort, array5, 0, len(array5)-1)
+		array6 := make(TestComparable, 0)
 		for cntr := 0; cntr < len(initarray); cntr++ {
-			(&bsstruct).Append(initarray[cntr], int32(cntr))
+			array6 = append(array6, initarray[cntr])
 		}
-		t2 := time.Now()
-		fmt.Println(t2.UnixNano() - t1.UnixNano())
-		//bsort.Sort(&bsstruct)
-		timeDecor4((&bsstruct).Search, tkey)
+		fmt.Println(array6)
+		heap.BuildMinHeap(array6)
+		fmt.Println(array6)
+
+		fmt.Println("##### priority queue #####")
+		var pq queues.PQueueInt32
+		for cntr := 0; cntr < len(initarray); cntr++ {
+			(&pq).Insert(initarray[cntr])
+		}
+		(&pq).DequeAll()
+				fmt.Println("##### linked lists #####")
+				var llist symboltables.LList
+				for cntr := 0; cntr < len(initarray); cntr++ {
+					(&llist).Add(initarray[cntr], int32(cntr))
+				}
+				timeDecor4((&llist).Get, tkey)
+				fmt.Println(tkey)
+
+			fmt.Println("##### binary search ####")
+			var bsstruct symboltables.BinarySearchST
+			t1 := time.Now()
+			for cntr := 0; cntr < len(initarray); cntr++ {
+				(&bsstruct).Append(initarray[cntr], int32(cntr))
+			}
+			t2 := time.Now()
+			fmt.Println(t2.UnixNano() - t1.UnixNano())
+			//bsort.Sort(&bsstruct)
+			timeDecor4((&bsstruct).Search, tkey)
 	*/
 	fmt.Println("##### Binary Search Tree #####")
 	tkey := rand.Int31n(int32(len(initarray)))
+	tkey2 := TestComparable2{key: tkey}
 	var bst symboltables.BST
 	fmt.Println("create time")
 	t1 := time.Now()
@@ -231,27 +254,51 @@ func main() {
 	fmt.Println("create time")
 	t1 = time.Now()
 	for cntr := 0; cntr < len(initarray); cntr++ {
-		(&rbt).Put(initarray[cntr], int32(cntr))
+		(&rbt).Put(TestComparable2{key: initarray[cntr], value: int32(cntr)})
 	}
 	t2 = time.Now()
 	fmt.Println(t2.UnixNano() - t1.UnixNano())
-	timeDecor4((&rbt).Get, tkey)
-	timeDecor4((&rbt).Get, tkey)
+	t1 = time.Now()
+	rval := (&rbt).Get(tkey2)
+	t2 = time.Now()
+	fmt.Println("find node in rbt")
+	fmt.Println(t2.UnixNano() - t1.UnixNano())
+	fmt.Println(rval)
+	fmt.Println("rbt elemcount")
+	fmt.Println((&rbt).Len())
 	fmt.Println("rbt delete min,max")
-	(&rbt).Put(int32(-100), int32(2307))
-	fmt.Println((&rbt).Get(int32(-100)))
+	(&rbt).Put(TestComparable2{key: int32(-100), value: int32(2307)})
+	fmt.Println("rbt elemcount")
+	fmt.Println((&rbt).Len())
+
+	fmt.Println((&rbt).Get(TestComparable2{key: int32(-100)}))
 	fmt.Println((&rbt).FindMin())
 	(&rbt).DeleteMin()
-	fmt.Println((&rbt).FindMin())
-	fmt.Println((&rbt).Get(int32(-100)))
-	(&rbt).Put(int32(1<<31-1), int32(51574168))
-	fmt.Println((&rbt).Get(int32(1<<31 - 1)))
-	(&rbt).DeleteMax()
-	fmt.Println((&rbt).Get(int32(1<<31 - 1)))
+	fmt.Println("rbt elemcount")
+	fmt.Println((&rbt).Len())
 
-	(&rbt).Put(int32(-100), int32(2307))
 	fmt.Println((&rbt).FindMin())
-	(&rbt).Delete(int32(-100))
+	fmt.Println((&rbt).Get(TestComparable2{key: int32(-100)}))
+	fmt.Println("rbt elemcount")
+	fmt.Println((&rbt).Len())
+
+	(&rbt).Put(TestComparable2{key: int32(1<<31 - 1), value: int32(51574168)})
+	fmt.Println((&rbt).Get(TestComparable2{key: int32(1<<31 - 1)}))
+	(&rbt).DeleteMax()
+	fmt.Println("rbt elemcount")
+	fmt.Println((&rbt).Len())
+
+	fmt.Println((&rbt).Get(TestComparable2{key: int32(1<<31 - 1)}))
+
+	(&rbt).Put(TestComparable2{key: int32(-100), value: int32(2307)})
+	fmt.Println("rbt elemcount")
+	fmt.Println((&rbt).Len())
+
+	fmt.Println((&rbt).FindMin())
+	(&rbt).Delete(TestComparable2{key: int32(-100)})
+	fmt.Println("rbt elemcount")
+	fmt.Println((&rbt).Len())
+
 	fmt.Println((&rbt).FindMin())
 	//	fmt.Println((&bst).Get(tkey))
 	fmt.Println("GRAPHS")
@@ -273,6 +320,7 @@ func main() {
 		g := ReadGraph()
 		if len(os.Args) >= 3 {
 			var spf = new(graphs.SPF)
+			fmt.Println("SPF")
 			spf.Init(g)
 			spf.SP(os.Args[2])
 			fmt.Println(spf.SPFDist())
