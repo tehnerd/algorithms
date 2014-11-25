@@ -1,21 +1,17 @@
 package heap
 
-import (
-	"fmt"
-)
-
-func PrintInt32Heap(Heap []int32) {
-	for cntr := 0; cntr < len(Heap)/2; cntr++ {
-		fmt.Println(Heap[cntr])
-		if (2*cntr + 2) < len(Heap) {
-			fmt.Println(fmt.Sprintf("%d %d", Heap[2*cntr+1], Heap[2*cntr+2]))
-		} else {
-			fmt.Println(fmt.Sprintf("%d", Heap[2*cntr+1]))
-		}
-	}
+type Comparable interface {
+	Len() int
+	/*
+		Compare must returns -1 if Comparable[i]<Comparable[j]
+		1 if [i] > [j]
+		and 0 if equal
+	*/
+	Compare(i, j int) int
+	Swap(i, j int)
 }
 
-func HeapInt32Parent(index int) int {
+func HeapParent(index int) int {
 	if index == 0 {
 		return -1
 	} else {
@@ -23,83 +19,69 @@ func HeapInt32Parent(index int) int {
 	}
 }
 
-func BuildMaxHeapInt32(Heap []int32) []int32 {
-	MaxHeap := make([]int32, len(Heap))
-	for cntr := 0; cntr < len(Heap); cntr++ {
-		MaxHeapInsert(MaxHeap, Heap[cntr], cntr)
+func BuildMaxHeap(heap Comparable) {
+	for cntr := 0; cntr < heap.Len(); cntr++ {
+		MaxHeapCheck(heap, cntr)
 	}
-	return MaxHeap
 }
 
-func BuildMinHeapInt32(Heap []int32) []int32 {
-	MinHeap := make([]int32, len(Heap))
-	for cntr := 0; cntr < len(Heap); cntr++ {
-		MinHeapInsert(MinHeap, Heap[cntr], cntr)
+func BuildMinHeap(heap Comparable) {
+	for cntr := 0; cntr < heap.Len(); cntr++ {
+		MinHeapCheck(heap, cntr)
 	}
-	return MinHeap
 }
 
-func swapElem(array []int32, pos1, pos2 int) {
-	tmp := array[pos1]
-	array[pos1] = array[pos2]
-	array[pos2] = tmp
-}
-
-func MaxHeapInsert(MaxHeap []int32, newElem int32, pos int) {
-	MaxHeap[pos] = newElem
-	if HeapInt32Parent(pos) == -1 {
+func MaxHeapCheck(MaxHeap Comparable, pos int) {
+	if HeapParent(pos) == -1 {
 		return
-	} else if MaxHeap[HeapInt32Parent(pos)] < newElem {
-		swapElem(MaxHeap, pos, HeapInt32Parent(pos))
-		MaxHeapInsert(MaxHeap, newElem, HeapInt32Parent(pos))
+	} else if MaxHeap.Compare(HeapParent(pos), pos) == -1 {
+		MaxHeap.Swap(pos, HeapParent(pos))
+		MaxHeapCheck(MaxHeap, HeapParent(pos))
 	}
 }
 
-func MaxHeapReheapify(MaxHeap []int32, pos int) {
-	if 2*(pos+1)-1 >= len(MaxHeap) {
+func MaxHeapReheapify(MaxHeap Comparable, pos int) {
+	if 2*(pos+1)-1 >= MaxHeap.Len() {
 		return
 	}
-	if MaxHeap[pos] < MaxHeap[2*(pos+1)-1] {
-		swapElem(MaxHeap, pos, 2*(pos+1)-1)
+	if MaxHeap.Compare(pos, 2*(pos+1)-1) == -1 {
+		MaxHeap.Swap(pos, 2*(pos+1)-1)
 		MaxHeapReheapify(MaxHeap, 2*(pos+1)-1)
 	}
-	if 2*(pos+1) >= len(MaxHeap) {
+	if 2*(pos+1) >= MaxHeap.Len() {
 		return
 	}
-	if MaxHeap[pos] < MaxHeap[2*(pos+1)] {
-		swapElem(MaxHeap, pos, 2*(pos+1))
+	if MaxHeap.Compare(pos, 2*(pos+1)) == -1 {
+		MaxHeap.Swap(pos, 2*(pos+1))
 		MaxHeapReheapify(MaxHeap, 2*(pos+1))
 	}
 	return
 }
 
-func MinHeapReheapify(MinHeap []int32, pos int) {
-	if 2*(pos+1)-1 >= len(MinHeap) {
+func MinHeapReheapify(MinHeap Comparable, pos int) {
+	if 2*(pos+1)-1 >= MinHeap.Len() {
 		return
 	}
-	if MinHeap[pos] > MinHeap[2*(pos+1)-1] {
-		swapElem(MinHeap, pos, 2*(pos+1)-1)
+	if MinHeap.Compare(pos, 2*(pos+1)-1) == 1 {
+		MinHeap.Swap(pos, 2*(pos+1)-1)
 		MinHeapReheapify(MinHeap, 2*(pos+1)-1)
 	}
-	if 2*(pos+1) >= len(MinHeap) {
+	if 2*(pos+1) >= MinHeap.Len() {
 		return
 	}
-	if MinHeap[pos] > MinHeap[2*(pos+1)] {
-		swapElem(MinHeap, pos, 2*(pos+1))
+	if MinHeap.Compare(pos, 2*(pos+1)) == 1 {
+		MinHeap.Swap(pos, 2*(pos+1))
 		MinHeapReheapify(MinHeap, 2*(pos+1))
 	}
 	return
 }
 
-func MinHeapInsert(MinHeap []int32, newElem int32, pos int) {
-	MinHeap[pos] = newElem
-	parentPos := HeapInt32Parent(pos)
+func MinHeapCheck(MinHeap Comparable, pos int) {
+	parentPos := HeapParent(pos)
 	if parentPos == -1 {
 		return
-	} else if MinHeap[parentPos] > newElem {
-		tmp := newElem
-		MinHeap[pos] = MinHeap[parentPos]
-		MinHeap[parentPos] = tmp
-		MinHeapInsert(MinHeap, newElem, parentPos)
+	} else if MinHeap.Compare(parentPos, pos) == 1 {
+		MinHeap.Swap(pos, parentPos)
+		MinHeapCheck(MinHeap, parentPos)
 	}
 }

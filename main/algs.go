@@ -1,7 +1,8 @@
 package main
 
 import (
-	//"algs/queues"
+	"algs/heap"
+	"algs/queues"
 	//"algs/sort"
 	"algs/symboltables"
 	"fmt"
@@ -110,9 +111,31 @@ func ReadGraph() *graphs.Graph {
 	return graph
 }
 
+type TestComparable []int32
+
+func (tc TestComparable) Compare(i, j int) int {
+	if tc[i] < tc[j] {
+		return -1
+	} else if tc[i] > tc[j] {
+		return 1
+	} else {
+		return 0
+	}
+}
+
+func (tc TestComparable) Len() int {
+	return len(tc)
+}
+
+func (tc TestComparable) Swap(i, j int) {
+	tmp := tc[i]
+	tc[i] = tc[j]
+	tc[j] = tmp
+}
+
 func main() {
 	fmt.Println("hello")
-	initarray := make([]int32, 100000)
+	initarray := make([]int32, 100)
 	rand.Seed(time.Now().UnixNano())
 	for cntr := 0; cntr < cap(initarray); cntr++ {
 		initarray[cntr] = rand.Int31n(int32(len(initarray)))
@@ -123,49 +146,54 @@ func main() {
 	//fmt.Println(perc, " ", num)
 
 	/*
-				array1 := copyArray(initarray)
-				//maxHeap := heap.BuildMaxHeapInt32(array1)
-				//minHeap := heap.BuildMinHeapInt32(array1)
-				fmt.Println("##### percentile ######")
-				array0 := copyArray(initarray)
-				perc, num := timeDecor3(sort.FindPercentile, array0, 50)
-				fmt.Println(perc, " ", num)
-				fmt.Println("#####  merge sort  #####")
-				timeDecor2(sort.MergeSort, array1, 0, len(array1)-1)
-				testArray(array1)
-				timeDecor2(sort.MergeSort, array1, 0, len(array1)-1)
-				fmt.Println(array1[num])
-				fmt.Println("#####  selection sort  #####")
-				array2 := copyArray(initarray)
-				timeDecor(sort.SelectionSort, array2)
-				testArray(array2)
-				timeDecor(sort.SelectionSort, array2)
-				fmt.Println("#####  insertion sort  #####")
-				array3 := copyArray(initarray)
-				timeDecor(sort.InsertionSort, array3)
-				testArray(array3)
-				timeDecor(sort.InsertionSort, array3)
-				fmt.Println("#####  shell sort  #####")
-				array4 := copyArray(initarray)
-				timeDecor(sort.ShellSort, array4)
-				testArray(array4)
-				timeDecor(sort.ShellSort, array4)
-				fmt.Println("#####  quick sort  #####")
-				array5 := copyArray(initarray)
-				timeDecor2(sort.QuickSort, array5, 0, len(array5)-1)
-				testArray(array5)
-				timeDecor2(sort.QuickSort, array5, 0, len(array5)-1)
-				fmt.Println("##### heap sort #####")
-				array6 := copyArray(initarray)
-				timeDecor(sort.HeapSort, array6)
-				testArray(array6)
-				timeDecor(sort.HeapSort, array6)
-				fmt.Println("##### priority queue #####")
-				var pq queues.PQueue
-				for cntr := 0; cntr < len(initarray); cntr++ {
-					(&pq).Insert(initarray[cntr])
-				}
-				(&pq).DequeAll()
+		array1 := copyArray(initarray)
+		//maxHeap := heap.BuildMaxHeapInt32(array1)
+		//minHeap := heap.BuildMinHeapInt32(array1)
+		fmt.Println("##### percentile ######")
+		array0 := copyArray(initarray)
+		perc, num := timeDecor3(sort.FindPercentile, array0, 50)
+		fmt.Println(perc, " ", num)
+		fmt.Println("#####  merge sort  #####")
+		timeDecor2(sort.MergeSort, array1, 0, len(array1)-1)
+		testArray(array1)
+		timeDecor2(sort.MergeSort, array1, 0, len(array1)-1)
+		fmt.Println(array1[num])
+		fmt.Println("#####  selection sort  #####")
+		array2 := copyArray(initarray)
+		timeDecor(sort.SelectionSort, array2)
+		testArray(array2)
+		timeDecor(sort.SelectionSort, array2)
+		fmt.Println("#####  insertion sort  #####")
+		array3 := copyArray(initarray)
+		timeDecor(sort.InsertionSort, array3)
+		testArray(array3)
+		timeDecor(sort.InsertionSort, array3)
+		fmt.Println("#####  shell sort  #####")
+		array4 := copyArray(initarray)
+		timeDecor(sort.ShellSort, array4)
+		testArray(array4)
+		timeDecor(sort.ShellSort, array4)
+		fmt.Println("#####  quick sort  #####")
+		array5 := copyArray(initarray)
+		timeDecor2(sort.QuickSort, array5, 0, len(array5)-1)
+		testArray(array5)
+		timeDecor2(sort.QuickSort, array5, 0, len(array5)-1)
+	*/
+	array6 := make(TestComparable, 0)
+	for cntr := 0; cntr < len(initarray); cntr++ {
+		array6 = append(array6, initarray[cntr])
+	}
+	fmt.Println(array6)
+	heap.BuildMinHeap(array6)
+	fmt.Println(array6)
+
+	fmt.Println("##### priority queue #####")
+	var pq queues.PQueueInt32
+	for cntr := 0; cntr < len(initarray); cntr++ {
+		(&pq).Insert(initarray[cntr])
+	}
+	(&pq).DequeAll()
+	/*
 			fmt.Println("##### linked lists #####")
 			var llist symboltables.LList
 			for cntr := 0; cntr < len(initarray); cntr++ {

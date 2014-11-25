@@ -149,13 +149,3 @@ func FindPercentile(array []int32, percentile int) (int32, int) {
 	}
 	return array[elemNum], elemNum
 }
-
-func HeapSort(array []int32) {
-	minHeap := heap.BuildMinHeapInt32(array)
-	for cntr := 0; cntr < len(array); cntr++ {
-		array[cntr] = minHeap[0]
-		minHeap[0] = minHeap[len(minHeap)-1]
-		minHeap = minHeap[:len(minHeap)-1]
-		heap.MinHeapReheapify(minHeap, 0)
-	}
-}
