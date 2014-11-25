@@ -56,12 +56,12 @@ func (rbtn *RBTNode) flipColors() {
 	if rbtn == nil {
 		return
 	}
-	rbtn.color = RED
+	rbtn.color = !rbtn.color
 	if rbtn.left != nil {
-		rbtn.left.color = BLACK
+		rbtn.left.color = !rbtn.left.color
 	}
 	if rbtn.right != nil {
-		rbtn.right.color = BLACK
+		rbtn.right.color = !rbtn.right.color
 	}
 }
 
@@ -69,17 +69,17 @@ func (rbtn *RBTNode) flipColorsDelete() {
 	if rbtn == nil {
 		return
 	}
-	rbtn.color = BLACK
+	rbtn.color = !rbtn.color //BLACK
 	if rbtn.left != nil {
-		rbtn.left.color = RED
+		rbtn.left.color = !rbtn.left.color //RED
 	}
 	if rbtn.right != nil {
-		rbtn.right.color = RED
+		rbtn.right.color = !rbtn.right.color //RED
 	}
 }
 
 func (rbtn *RBTNode) moveRedLeft() *RBTNode {
-	rbtn.flipColorsDelete()
+	rbtn.flipColors()
 	if rbtn.right == nil {
 		return rbtn
 	}
@@ -91,7 +91,7 @@ func (rbtn *RBTNode) moveRedLeft() *RBTNode {
 }
 
 func (rbtn *RBTNode) moveRedRight() *RBTNode {
-	rbtn.flipColorsDelete()
+	rbtn.flipColors()
 	if rbtn.left == nil {
 		return rbtn
 	}
@@ -209,7 +209,7 @@ func (rbtn *RBTNode) balance() *RBTNode {
 		rbtn = rbtn.rotateRight()
 	}
 	if rbtn.right.isRed() && rbtn.left.isRed() {
-		rbtn.flipColorsDelete()
+		rbtn.flipColors()
 	}
 	return rbtn
 
